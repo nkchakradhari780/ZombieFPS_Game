@@ -17,6 +17,7 @@ public class playerScript : MonoBehaviour
     [Header("Player Jumping and Velocity")]
     public float turnCalmTime = 0.1f;
     float turnCalmVelocity;
+
     public float jumpRange = 1f;
     Vector3 velocity;
     public Transform surfaceCheck;
@@ -37,6 +38,7 @@ public class playerScript : MonoBehaviour
         cController.Move(velocity * Time.deltaTime);
 
         PlayerMove();
+        Jump();
     }
 
     void PlayerMove()
@@ -44,9 +46,9 @@ public class playerScript : MonoBehaviour
         float horizontalAxis = Input.GetAxis("Horizontal");
         float verticalAxis = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(horizontalAxis, 0, verticalAxis).normalized;   
+        Vector3 direction = new Vector3(horizontalAxis, 0, verticalAxis).normalized;
 
-        if(direction.magnitude >= 0.1f)
+        if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnCalmVelocity, turnCalmTime);
@@ -54,6 +56,14 @@ public class playerScript : MonoBehaviour
 
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             cController.Move(moveDirection * playerSpeed * Time.deltaTime);
+        }
+    }
+
+    void Jump()
+    {
+        if(Input.GetButtonDown("Jump") && onSurface)
+        {
+            velocity.y = Mathf.Sqrt(jumpRange * -2f * gravity);
         }
     }
 }
