@@ -1,11 +1,18 @@
-using System.IO;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
 public class playerScript : MonoBehaviour
 {
+    [Header("Player Controls")]
+    public InputActionAsset playerControls;
+    InputAction moveAction;
+    InputAction sprintAction;
+    InputAction jumpAction;
+
+
     [Header("Player Movement")]
     public float playerSpeed = 1.9f;
+    public float playerSprintSpeed = 3f;
 
     [Header("Player Character controller and Gravity")]
     public CharacterController cController;
@@ -41,27 +48,48 @@ public class playerScript : MonoBehaviour
         Jump();
     }
 
+    private void OnEnable()
+    {
+        var map = playerControls.FindActionMap("Player");
+
+        moveAction = map.FindAction("Move");
+        sprintAction = map.FindAction("Sprint");
+        jumpAction = map.FindAction("Jump");
+
+        moveAction.Enable();
+        sprintAction.Enable();
+        jumpAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        moveAction.Disable();
+        sprintAction.Disable();
+        jumpAction.Disable();
+    }
+
     void PlayerMove()
     {
-        float horizontalAxis = Input.GetAxis("Horizontal");
-        float verticalAxis = Input.GetAxis("Vertical");
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        Vector3 direction = new Vector3(input.x, 0, input.y).normalized;
 
-        Vector3 direction = new Vector3(horizontalAxis, 0, verticalAxis).normalized;
+        float speed = sprintAction.IsPressed() ? playerSprintSpeed : playerSpeed;
 
         if (direction.magnitude >= 0.1f)
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
+            float targetAngle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
+
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnCalmVelocity, turnCalmTime);
             transform.rotation = Quaternion.Euler(0, angle, 0);
 
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-            cController.Move(moveDirection * playerSpeed * Time.deltaTime);
+            cController.Move(moveDirection * speed * Time.deltaTime);
         }
     }
 
     void Jump()
     {
-        if(Input.GetButtonDown("Jump") && onSurface)
+        if(jumpAction.triggered && onSurface)
         {
             velocity.y = Mathf.Sqrt(jumpRange * -2f * gravity);
         }
