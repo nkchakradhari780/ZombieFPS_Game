@@ -18,6 +18,9 @@ public class playerScript : MonoBehaviour
     public CharacterController cController;
     public float gravity = -9.81f;
 
+    [Header("Player Animator")]
+    public Animator playerAnimator;
+
     [Header("Player Script Cameras")]
     public Transform playerCamera;
 
@@ -77,6 +80,20 @@ public class playerScript : MonoBehaviour
 
         if (direction.magnitude >= 0.1f)
         {
+            playerAnimator.SetBool("Idle", false);
+            if (sprintAction.IsPressed())
+            {
+                playerAnimator.SetBool("Running", true);
+                playerAnimator.SetBool("Walk", false);
+            }
+            else
+            {
+                playerAnimator.SetBool("Running", false);
+                playerAnimator.SetBool("Walk", true);
+            }
+            playerAnimator.SetBool("FireWalk", false);
+            playerAnimator.SetBool("IdleAim", false);
+
             float targetAngle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
 
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnCalmVelocity, turnCalmTime);
@@ -85,13 +102,26 @@ public class playerScript : MonoBehaviour
             Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             cController.Move(moveDirection * speed * Time.deltaTime);
         }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.SetBool("Walk", false);
+            playerAnimator.SetBool("Running", false);
+        }
     }
 
     void Jump()
     {
         if(jumpAction.triggered && onSurface)
         {
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetTrigger("Jump");
             velocity.y = Mathf.Sqrt(jumpRange * -2f * gravity);
+        }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.ResetTrigger("Jump");
         }
     }
 }
