@@ -94,7 +94,7 @@ public class playerScript : MonoBehaviour
             playerAnimator.SetBool("FireWalk", false);
             playerAnimator.SetBool("IdleAim", false);
 
-            float targetAngle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + playerCamera.eulerAngles.y;
 
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnCalmVelocity, turnCalmTime);
             transform.rotation = Quaternion.Euler(0, angle, 0);
