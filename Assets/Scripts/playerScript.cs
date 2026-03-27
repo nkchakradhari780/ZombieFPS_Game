@@ -114,14 +114,8 @@ public class playerScript : MonoBehaviour
     {
         if(jumpAction.triggered && onSurface)
         {
-            playerAnimator.SetBool("Idle", false);
             playerAnimator.SetTrigger("Jump");
             velocity.y = Mathf.Sqrt(jumpRange * -2f * gravity);
-        }
-        else
-        {
-            playerAnimator.SetBool("Idle", true);
-            playerAnimator.ResetTrigger("Jump");
         }
     }
 }
