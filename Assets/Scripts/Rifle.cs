@@ -10,6 +10,7 @@ public class Rifle : MonoBehaviour
     public float fireCharge = 15;
     private float nextTimeToShoot = 0f;
     public playerScript player;
+    public Transform hand;
 
     [Header("Rifle Ammunition and shooting")]
     private int maximumAmmunition = 32;
@@ -25,6 +26,7 @@ public class Rifle : MonoBehaviour
 
     private void Awake()
     {
+        transform.SetParent(hand);
         presentAmmunition = maximumAmmunition;
     }
 
