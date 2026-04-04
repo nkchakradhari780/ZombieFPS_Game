@@ -18,7 +18,8 @@ public class PickupRifle : MonoBehaviour
     public playerScript player;
     private float radius = 2.5f;
     private float nextTimeToPunch = 0f;
-    public float punchCharge = 15f; 
+    public float punchCharge = 15f;
+    public Animator animator;
 
 
     private void Awake()
@@ -70,10 +71,17 @@ public class PickupRifle : MonoBehaviour
     {
         if(fireAction.IsInProgress() && Time.time >= nextTimeToPunch)
         {
+            animator.SetBool("Punch", true);
+            animator.SetBool("Idle", false);
             nextTimeToPunch = Time.time + 1f / punchCharge;
 
             playerPunch.Punch();
 
+        }
+        else
+        {
+            animator.SetBool("Punch", false);
+            animator.SetBool("Idle", true);
         }
 
         if (Vector3.Distance(transform.position, player.transform.position) < radius)
