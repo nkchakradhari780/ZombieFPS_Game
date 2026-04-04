@@ -9,7 +9,6 @@ public class playerScript : MonoBehaviour
     InputAction sprintAction;
     InputAction jumpAction;
 
-
     [Header("Player Movement")]
     public float playerSpeed = 1.9f;
     public float playerSprintSpeed = 3f;

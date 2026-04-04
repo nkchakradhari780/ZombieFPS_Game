@@ -13,9 +13,9 @@ public class Rifle : MonoBehaviour
     public Transform hand;
 
     [Header("Rifle Ammunition and shooting")]
-    private int maximumAmmunition = 32;
-    private int mag = 10;
-    private int presentAmmunition;
+    private int magazineSize = 32;
+    private int totalMagazines = 10;
+    private int currentAmmo;
     public float reloadingTime = 1.3f;
     private bool setReloading = false;
 
@@ -27,14 +27,14 @@ public class Rifle : MonoBehaviour
     private void Awake()
     {
         transform.SetParent(hand);
-        presentAmmunition = maximumAmmunition;
+        currentAmmo = magazineSize;
     }
 
     void Update()
     {
         if (setReloading) return;
 
-        if ( presentAmmunition <= 0)
+        if ( currentAmmo <= 0)
         {
             StartCoroutine(Reload());
             return;
@@ -49,22 +49,22 @@ public class Rifle : MonoBehaviour
 
     private void Shoot()
     {
-        if ( mag == 0)
+        if ( totalMagazines == 0)
         {
             // show ammo out text 
             return;
         }
 
-        presentAmmunition--;
+        currentAmmo--;
 
-        if ( presentAmmunition == 0)
+        if ( currentAmmo == 0)
         {
-            mag--;
+            totalMagazines--;
         }
 
         // Update the UI
 
-        muzzleSpark.Play();
+        muzzleSpark.Play();     
         RaycastHit hitInfo;
 
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hitInfo, range))
@@ -92,7 +92,7 @@ public class Rifle : MonoBehaviour
         // Play Reloading Sound 
         yield return new WaitForSeconds(reloadingTime);
         // play Animation
-        presentAmmunition = maximumAmmunition;
+        currentAmmo = magazineSize;
         player.playerSpeed = 1.9f;
         player.playerSprintSpeed = 3f;
         setReloading = false;
